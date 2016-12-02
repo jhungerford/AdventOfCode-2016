@@ -40,4 +40,9 @@ public class Problem1Test {
   public void right5left5right5right3() {
     assertThat(Problem1.follow("R5, L5, R5, R3").blocksFromStart()).isEqualTo(12);
   }
+
+  @Test
+  public void visitedTwiceExample() {
+    assertThat(Problem1.firstVisitedTwice("R8, R4, R4, R8").blocksFromStart()).isEqualTo(4);
+  }
 }

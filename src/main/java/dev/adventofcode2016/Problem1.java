@@ -5,6 +5,9 @@ import com.google.common.base.Splitter;
 import com.google.common.io.Resources;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Problem1 {
 
@@ -35,28 +38,51 @@ public class Problem1 {
       this.direction = direction;
     }
 
-    public Position move(String step) {
+    public List<Position> move(String step) {
       char direction = step.charAt(0);
       int amount = Integer.valueOf(step.substring(1));
 
       Direction newDirection = this.direction.turn(direction);
 
-      switch (newDirection) {
-        case NORTH:
-          return new Position(this.xBlock, this.yBlock + amount, Direction.NORTH);
-        case EAST:
-          return new Position(this.xBlock + amount, this.yBlock, Direction.EAST);
-        case SOUTH:
-          return new Position(this.xBlock, this.yBlock - amount, Direction.SOUTH);
-        case WEST:
-          return new Position(this.xBlock - amount, this.yBlock, Direction.WEST);
-        default:
-          throw new IllegalStateException("Unknown direction " + newDirection);
+      List<Position> positions = new ArrayList<>();
+      for (int i = 1; i <= amount; i ++) {
+        switch (newDirection) {
+          case NORTH:
+            positions.add(new Position(this.xBlock, this.yBlock + i, Direction.NORTH));
+            break;
+          case EAST:
+            positions.add(new Position(this.xBlock + i, this.yBlock, Direction.EAST));
+            break;
+          case SOUTH:
+            positions.add(new Position(this.xBlock, this.yBlock - i, Direction.SOUTH));
+            break;
+          case WEST:
+            positions.add(new Position(this.xBlock - i, this.yBlock, Direction.WEST));
+            break;
+          default:
+            throw new IllegalStateException("Unknown direction " + newDirection);
+        }
       }
+
+      return positions;
     }
 
     public int blocksFromStart() {
       return Math.abs(xBlock) + Math.abs(yBlock);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Position position = (Position) o;
+      return xBlock == position.xBlock &&
+          yBlock == position.yBlock;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(xBlock, yBlock);
     }
 
     @Override
@@ -69,15 +95,41 @@ public class Problem1 {
     Position position = Position.START;
 
     for (String step : STEP_SPLITTER.split(steps)) {
-      position = position.move(step);
+      List<Position> moves = position.move(step);
+      position = moves.get(moves.size() - 1);
+    }
+
+    return position;
+  }
+
+  public static Position firstVisitedTwice(String steps) {
+    Position position = Position.START;
+
+    List<Position> alreadyVisited = new ArrayList<>();
+    alreadyVisited.add(position);
+
+    for (String step : STEP_SPLITTER.split(steps)) {
+      List<Position> moves = position.move(step);
+
+      for (Position move : moves) {
+        if (alreadyVisited.contains(move)) {
+          return move;
+        }
+      }
+
+      alreadyVisited.addAll(moves);
+      position = moves.get(moves.size() - 1);
     }
 
     return position;
   }
 
   public static void main(String[] args) throws IOException {
-    String part1Steps = Resources.toString(Resources.getResource("problem1.txt"), Charsets.UTF_8);
-    Position part1 = follow(part1Steps);
+    String steps = Resources.toString(Resources.getResource("problem1.txt"), Charsets.UTF_8);
+    Position part1 = follow(steps);
     System.out.println("Part1: " + part1.blocksFromStart() + " blocks from start");
+
+    Position part2 = firstVisitedTwice(steps);
+    System.out.println("Position visited twice: " + part2.blocksFromStart() + " blocks from start");
   }
 }
