@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Problem3 {
 
@@ -74,7 +74,7 @@ public class Problem3 {
    * @param rows Three rows to convert to triangles
    * @return Triangles from the columns of the rows.
    */
-  public static List<Triangle> fromColumns(List<String> rows) {
+  public static Stream<Triangle> fromColumns(List<String> rows) {
     // Convert rows of raw strings to a 3x3 int array
     int[][] values = rows.stream()
         .map(String::trim)
@@ -90,8 +90,7 @@ public class Problem3 {
             values[0][column],
             values[1][column],
             values[2][column]
-        ))
-        .collect(Collectors.toList());
+        ));
   }
 
   public static void main(String[] args) throws IOException {
@@ -105,19 +104,19 @@ public class Problem3 {
     System.out.println("Part 1: " + numPossiblePart1 + " possible triangles");
 
     // Triangles are in vertical columns across three rows.  Collect batches of 3 rows, and convert them to triangles.
-    List<Triangle> trianglesPart2 = new ArrayList<>();
     List<String> batch = new ArrayList<>(3);
-    for (String line : lines) {
-      batch.add(line);
+    long numPossiblePart2 = lines.stream()
+        .flatMap(line -> {
+          batch.add(line);
 
-      // Convert batches of 3 lines to triangles
-      if (batch.size() == 3) {
-        trianglesPart2.addAll(fromColumns(batch));
-        batch.clear();
-      }
-    }
+          if (batch.size() == 3) {
+            Stream<Triangle> triangles = fromColumns(batch);
+            batch.clear();
+            return triangles;
+          }
 
-    long numPossiblePart2 = trianglesPart2.parallelStream()
+          return Stream.of();
+        })
         .filter(Triangle::isPossible)
         .count();
 
