@@ -62,4 +62,12 @@ public class Problem4Test {
 
     assertThat(validSectorSum).isEqualTo(1514);
   }
+
+  @Test
+  public void decrypt() {
+    Problem4.Room room = Problem4.Room.fromLine("qzmt-zixmtkozy-ivhz-343[zimth]");
+
+    assertThat(room.isValid()).isTrue();
+    assertThat(room.decryptedName()).isEqualTo("very encrypted name");
+  }
 }
