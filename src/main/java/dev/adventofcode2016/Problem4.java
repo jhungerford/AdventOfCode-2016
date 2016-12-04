@@ -126,6 +126,12 @@ public class Problem4 {
     }
   }
 
+  /**
+   * Sums the sector id for rooms with valid checksums.
+   *
+   * @param lines Lines containing encrypted rooms.
+   * @return Sum of the sector id of valid rooms.
+   */
   public static int sumValidRoomSectors(Collection<String> lines) {
     return lines.stream()
         .map(Room::fromLine)
@@ -134,17 +140,29 @@ public class Problem4 {
         .sum();
   }
 
+  /**
+   * Finds the room with the given decrypted name, if it exists.
+   *
+   * @param lines Lines containing encrypted rooms.
+   * @param name Decrypted name of the room to find
+   * @return Room with the given name, if it exists.
+   */
+  public static Optional<Room> findRoom(Collection<String> lines, String name) {
+    return lines.stream()
+        .map(Room::fromLine)
+        .filter(room -> name.equals(room.decryptedName()))
+        .findFirst();
+  }
+
   public static void main(String[] args) throws IOException {
     List<String> lines = Resources.readLines(Resources.getResource("problem4.txt"), Charsets.UTF_8);
 
-    int part1 = sumValidRoomSectors(lines);
-    System.out.println("Part 1: " + part1 + " is the sum of the sector ids of real rooms.");
+    // Part 1 - sum the sector ids of valid rooms.
+    int validRoomSectors = sumValidRoomSectors(lines);
+    System.out.println("Part 1: " + validRoomSectors + " is the sum of the sector ids of real rooms.");
 
-    Optional<Room> northPole = lines.stream()
-        .map(Room::fromLine)
-        .filter(room -> "northpole object storage".equals(room.decryptedName()))
-        .findFirst();
-
+    // Part 2 - find the room containing North Pole objects
+    Optional<Room> northPole = findRoom(lines, "northpole object storage");
     String northPoleSector = northPole
         .map(room -> "" + room.sector)
         .orElse("???");
