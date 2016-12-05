@@ -12,4 +12,9 @@ public class Problem5Test {
     assertThat(password).isEqualTo("18f");
   }
 
+  @Test
+  public void part2Example() {
+    String password = Problem5.positionPassword("abc");
+    assertThat(password).isEqualTo("05ace8e3");
+  }
 }
