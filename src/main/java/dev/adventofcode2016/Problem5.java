@@ -21,6 +21,7 @@ public class Problem5 {
    */
   public static String password(String doorID, int length) {
     return IntStream.iterate(0, i -> i + 1)
+        .parallel()
         .mapToObj(i -> doorID + i) // Hash input is code + index
         .map(code -> MD5.hashString(code, Charsets.UTF_8).toString()) // MD5
         .filter(hash -> hash.startsWith("00000")) // Interesting codes start with five 0's
@@ -45,24 +46,29 @@ public class Problem5 {
   public static String positionPassword(String doorID) {
     System.out.println("Decoding password...");
 
-    StringBuilder bldr = new StringBuilder("________");
-    System.out.println("  " + bldr);
+    char[] password = new char[]{'_', '_', '_', '_', '_', '_', '_', '_'};
+    System.out.println("  " + new String(password));
 
-    for (int i = 0; bldr.toString().indexOf('_') != -1; i ++) {
+    boolean done = false;
+    for (int i = 0; !done; i ++) {
       String hash = MD5.hashString(doorID + i, Charsets.UTF_8).toString();
 
       if (hash.startsWith("00000")) {
-        char indexChar = hash.charAt(5);
+        int index = Character.digit(hash.charAt(5), 16);
         char passwordChar = hash.charAt(6);
 
-        if (indexChar >= '0' && indexChar <= '7' && bldr.charAt(indexChar - '0') == '_') {
-          bldr.setCharAt(indexChar - '0', passwordChar);
-          System.out.println("  " + bldr);
+        if (index < 8 && password[index] == '_') {
+          password[index] = passwordChar;
+
+          String passwordSoFar = new String(password);
+          System.out.println("  " + passwordSoFar);
+
+          done = passwordSoFar.indexOf('_') == -1;
         }
       }
     }
 
-    return bldr.toString();
+    return new String(password);
   }
 
   public static void main(String[] args) {
