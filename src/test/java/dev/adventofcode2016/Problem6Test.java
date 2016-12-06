@@ -9,28 +9,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class Problem6Test {
 
-  @Test
-  public void part1Example() {
-    List<String> lines = ImmutableList.of(
-        "eedadn",
-        "drvtee",
-        "eandsr",
-        "raavrd",
-        "atevrs",
-        "tsrnev",
-        "sdttsa",
-        "rasrtv",
-        "nssdts",
-        "ntnada",
-        "svetve",
-        "tesnvt",
-        "vntsnd",
-        "vrdear",
-        "dvrsen",
-        "enarar"
-    );
+  public static final List<String> INPUT = ImmutableList.of(
+      "eedadn",
+      "drvtee",
+      "eandsr",
+      "raavrd",
+      "atevrs",
+      "tsrnev",
+      "sdttsa",
+      "rasrtv",
+      "nssdts",
+      "ntnada",
+      "svetve",
+      "tesnvt",
+      "vntsnd",
+      "vrdear",
+      "dvrsen",
+      "enarar"
+  );
 
-    String errorCorrected = Problem6.errorCorrected(lines);
+  @Test
+  public void mostCommonLetterExample() {
+    String errorCorrected = Problem6.errorCorrected(INPUT, Problem6.MOST_COMMON_LETTER);
     assertThat(errorCorrected).isEqualTo("easter");
+  }
+
+  @Test
+  public void leastCommonLetterExample() {
+    String errorCorrected = Problem6.errorCorrected(INPUT, Problem6.LEAST_COMMON_LETTER);
+    assertThat(errorCorrected).isEqualTo("advent");
   }
 }
