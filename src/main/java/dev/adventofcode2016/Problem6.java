@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 public class Problem6 {
 
   public static final Comparator<Map.Entry<Character, Integer>> LEAST_COMMON_LETTER =
-      Map.Entry.<Character, Integer>comparingByValue();
+      Map.Entry.comparingByValue();
 
   public static final Comparator<Map.Entry<Character, Integer>> MOST_COMMON_LETTER =
       Map.Entry.<Character, Integer>comparingByValue().reversed();
@@ -37,12 +37,10 @@ public class Problem6 {
 
     // Take the most common character in each column to form the answer
     return columnCount.stream()
-        .flatMap(map -> {
-              return map.entrySet().stream()
-                  .sorted(order)
-                  .map(Map.Entry::getKey) // Most common character in the column
-                  .limit(1);
-            }
+        .flatMap(map -> map.entrySet().stream()
+            .sorted(order)
+            .map(Map.Entry::getKey) // Most common character in the column
+            .limit(1)
         ).collect(StringBuilder::new, StringBuilder::append, StringBuilder::append) // Convert to string
         .toString();
   }
