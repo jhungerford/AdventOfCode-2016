@@ -6,7 +6,9 @@ import com.google.common.io.Resources;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Problem7 {
 
@@ -53,6 +55,57 @@ public class Problem7 {
     }
 
     /**
+     * Returns whether this IPv7 address supports SSL (super-secret listening).
+     * An IP supports SSL if it has an Area-Broadcast Accessor, or ABA, anywhere
+     * in the supernet sequences (outside any square bracketed sections), and a
+     * corresponding Byte Allocation Block, or BAB, anywhere in the hypernet sequences.
+     * An ABA is any three-character sequence which consists of the same character twice
+     * with a different character between them, such as xyx or aba. A corresponding BAB
+     * is the same characters but in reversed positions: yxy and bab, respectively.
+     *
+     * @return Whether this address supports SSL.
+     */
+    public boolean supportsSSL() {
+      // Extract all possible ABAs from the segments, and invert them to BABs
+      List<String> segmentBabs = segments.stream()
+          .flatMap(Problem7.IPv7::extractABAOrBABs)
+          .map(Problem7.IPv7::invertABAOrBAB)
+          .collect(Collectors.toList());
+
+      // Extract BABs from hypernets
+      List<String> hypernetBabs = hypernetSequences.stream()
+          .flatMap(Problem7.IPv7::extractABAOrBABs)
+          .collect(Collectors.toList());
+
+      // If one of the segment BABs matches a hypernet BAB, this address supports ssl.
+      return segmentBabs.stream()
+          .anyMatch(hypernetBabs::contains);
+    }
+
+    /**
+     * Extracts all subsequences that look like 'aba', where the first and last character match and the
+     * middle character does not.
+     *
+     * @param str String to extract ABA or BABs from.
+     * @return All ABA or BAB sequences in the string.
+     */
+    public static Stream<String> extractABAOrBABs(String str) {
+      return IntStream.rangeClosed(0, str.length() - 3)
+          .mapToObj(index -> str.substring(index, index + 3))
+          .filter(s -> s.charAt(0) == s.charAt(2) && s.charAt(0) != s.charAt(1));
+    }
+
+    /**
+     * Inverts an ABA into a BAB, or a BAB into an ABA.  For example, invertABAOrBAB('aba') will return 'bab'.
+     *
+     * @param aba String to invert
+     * @return Inverted string
+     */
+    public static String invertABAOrBAB(String aba) {
+      return "" + aba.charAt(1) + aba.charAt(0) + aba.charAt(1);
+    }
+
+    /**
      * Constructs an IPv7 address from an address containing segments and hypernet sequences contained
      * in square brackets.
      *
@@ -87,6 +140,12 @@ public class Problem7 {
         .filter(Problem7.IPv7::supportsTLS)
         .count();
 
+    long sslCount = lines.stream()
+        .map(Problem7.IPv7::fromAddress)
+        .filter(Problem7.IPv7::supportsSSL)
+        .count();
+
     System.out.println("Part 1: " + tlsCount + " addresses support tls.");
+    System.out.println("Part 2: " + sslCount + " addresses support ssl.");
   }
 }

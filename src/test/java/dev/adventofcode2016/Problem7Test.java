@@ -45,4 +45,24 @@ public class Problem7Test {
   public void longSegmentHasAbbaAndNotAbba() {
     assertThat(Problem7.IPv7.hasAbba("xxxxabba")).isTrue();
   }
+
+  @Test
+  public void sslSupport() {
+    assertThat(Problem7.IPv7.fromAddress("aba[bab]xyz").supportsSSL()).isTrue();
+  }
+
+  @Test
+  public void noBab() {
+    assertThat(Problem7.IPv7.fromAddress("xyx[xyx]xyx").supportsSSL()).isFalse();
+  }
+
+  @Test
+  public void sameLetterAba() {
+    assertThat(Problem7.IPv7.fromAddress("aaa[kek]eke").supportsSSL()).isTrue();
+  }
+
+  @Test
+  public void overlappingAba() {
+    assertThat(Problem7.IPv7.fromAddress("zazbz[bzb]cdb").supportsSSL()).isTrue();
+  }
 }
