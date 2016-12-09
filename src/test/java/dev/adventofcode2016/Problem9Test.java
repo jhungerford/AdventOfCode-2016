@@ -35,4 +35,30 @@ public class Problem9Test {
   public void repeatInstructions() {
     assertThat(Problem9.decompress("X(8x2)(3x3)ABCY")).isEqualTo("X(3x3)ABC(3x3)ABCY");
   }
+
+  @Test
+  public void v2PlainString() {
+    assertThat(Problem9.decompressedLengthV2("ADVENT")).isEqualTo(6);
+  }
+
+  @Test
+  public void v2NoMarkers() {
+    assertThat(Problem9.decompressedLengthV2("(3x3)XYZ")).isEqualTo(9);
+  }
+
+  @Test
+  public void v2OneNestedMarker() {
+    assertThat(Problem9.decompressedLengthV2("X(8x2)(3x3)ABCY")).isEqualTo(20);
+  }
+
+  @Test
+  public void v2ManyImmediatelyNestedMarkers() {
+    assertThat(Problem9.decompressedLengthV2("(27x12)(20x12)(13x14)(7x10)(1x12)A")).isEqualTo(241920);
+  }
+
+  @Test
+  public void v2ManyTreeNestedMarkers() {
+    assertThat(Problem9.decompressedLengthV2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN"))
+        .isEqualTo(445);
+  }
 }
