@@ -324,6 +324,7 @@ public class Problem10 {
   public static void main(String[] args) throws IOException {
     List<String> lines = Resources.readLines(Resources.getResource("problem10.txt"), Charsets.UTF_8);
 
+    System.out.print("Part 1: chip that compares 17 and 61: ");
     Factory factory = factoryFromInstructions(lines);
     factory.registerComparisonTrace(new LowHighTrace(
         (low, high) -> low == 17 && high == 61,
@@ -331,5 +332,11 @@ public class Problem10 {
     ));
 
     factory.run();
+
+    int product = factory.outputs.get(0).value.orElse(0)
+        * factory.outputs.get(1).value.orElse(0)
+        * factory.outputs.get(2).value.orElse(0);
+
+    System.out.println("Part 2 - product of output 0, 1, and 2: " + product);
   }
 }
