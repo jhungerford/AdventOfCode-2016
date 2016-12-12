@@ -276,5 +276,11 @@ public class Problem12 {
     computer.run();
 
     System.out.println("Part 1: value of register a is " + computer.a);
+
+    computer = new Computer(instructions);
+    computer.set('c', 1);
+    computer.run();
+
+    System.out.println("Part 2: value of register a is " + computer.a);
   }
 }
