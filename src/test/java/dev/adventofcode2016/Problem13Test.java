@@ -1,10 +1,6 @@
 package dev.adventofcode2016;
 
-import com.google.common.collect.ImmutableList;
-import dev.adventofcode2016.util.ImmutableListCollector;
 import org.junit.Test;
-
-import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,26 +10,28 @@ public class Problem13Test {
 
   @Test
   public void part1ExampleBoard() {
-    // Iterates over the rows and columns, asking if the cells are open.  Builds a string for each row,
-    // with . if the cell is open or # if it's a wall.
-    ImmutableList<String> actual =
-        IntStream.rangeClosed(0, 6)
-            .mapToObj(y ->
-                IntStream.rangeClosed(0, 9)
-                    .mapToObj(x -> maze.isOpen(new Problem13.Point(x, y)) ? '.' : '#')
-                    .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
-                    .toString()
-            ).collect(new ImmutableListCollector<>());
-
-    assertThat(actual).containsExactly(
-        ".#.####.##",
-        "..#..#...#",
-        "#....##...",
-        "###.#.###.",
-        ".##..#..#.",
-        "..##....#.",
-        "#...##.###"
-    );
+    assertThat(maze.render(new Problem13.Point(9, 6)))
+        .containsExactly(
+            ".#.####.##",
+            "..#..#...#",
+            "#....##...",
+            "###.#.###.",
+            ".##..#..#.",
+            "..##....#.",
+            "#...##.###"
+        );
   }
 
+  @Test
+  public void outsideIsClosed() {
+    assertThat(maze.isOpen(new Problem13.Point(-1, 0))).isFalse();
+    assertThat(maze.isOpen(new Problem13.Point(0, -1))).isFalse();
+  }
+
+  @Test
+  public void part1ExampleShortestPath() {
+    int steps = maze.fewestSteps(new Problem13.Point(1, 1), new Problem13.Point(7, 4));
+
+    assertThat(steps).isEqualTo(11);
+  }
 }
