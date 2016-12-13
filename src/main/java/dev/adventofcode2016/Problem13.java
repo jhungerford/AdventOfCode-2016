@@ -144,6 +144,46 @@ public class Problem13 {
     }
 
     /**
+     * Returns the number of steps (including the starting point) reachable in the given number of steps.
+     *
+     * @param start Starting position
+     * @param maxSteps Number of steps to take
+     * @return Number of points reachable in the given number of steps
+     */
+    public int reachable(Point start, int maxSteps) {
+      Map<Point, Integer> steps = new HashMap<>(); // Map of point to the number of steps required to reach the point.
+      Set<Point> open = new HashSet<>(); // Points left to visit
+
+      open.add(start);
+      steps.put(start, 0);
+
+      while (!open.isEmpty()) {
+        Point current = open.stream()
+            .sorted(Comparator.comparing(steps::get)) // Compare the score for each point
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("Open set is empty."));
+
+        open.remove(current);
+
+        for (Point neighbor : neighbors(current)) {
+          if (open.contains(neighbor)) {
+            continue; // Already visited.
+          }
+
+          int neighborSteps = steps.get(current) + 1;
+          if (neighborSteps > maxSteps) {
+            continue; // Too far.
+          }
+
+          open.add(neighbor);
+          steps.put(neighbor, neighborSteps);
+        }
+      }
+
+      return steps.keySet().size();
+    }
+
+    /**
      * Returns the open neighbors of the given point.
      *
      * @param point Point to find neighbors for
@@ -199,5 +239,6 @@ public class Problem13 {
     maze.render(new Point(40, 50)).forEach(System.out::println);
 
     System.out.println("Part 1: " + maze.fewestSteps(new Point(1, 1), new Point(31, 39)) + " steps");
+    System.out.println("Part 2: " + maze.reachable(new Point(1, 1), 50) + " points reachable in 50 steps");
   }
 }

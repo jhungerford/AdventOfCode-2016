@@ -34,4 +34,9 @@ public class Problem13Test {
 
     assertThat(steps).isEqualTo(11);
   }
+
+  @Test
+  public void reachableIn4Steps() {
+    assertThat(maze.reachable(new Problem13.Point(1, 1), 4)).isEqualTo(9);
+  }
 }
