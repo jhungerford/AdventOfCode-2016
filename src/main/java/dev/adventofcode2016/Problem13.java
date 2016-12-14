@@ -1,10 +1,10 @@
 package dev.adventofcode2016;
 
 import com.google.common.collect.ImmutableList;
+import dev.adventofcode2016.algorithms.AStar;
 import dev.adventofcode2016.util.ImmutableListCollector;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -42,7 +42,7 @@ public class Problem13 {
     }
   }
 
-  public static class Maze {
+  public static class Maze implements AStar<Point> {
     private final int input;
 
     public Maze(int input) {
@@ -92,55 +92,7 @@ public class Problem13 {
      * @return Number of steps in the shortest path
      */
     public int fewestSteps(Point start, Point end) {
-      // https://en.wikipedia.org/wiki/A*_search_algorithm
-
-      Set<Point> visited = new HashSet<>(); // Set of points that have already been visited
-      Set<Point> open = new HashSet<>(); // Set of points to be evaluated
-      Map<Point, Point> from = new HashMap<>(); // Map of point to the point it can most efficiently be reached from
-
-      Map<Point, Integer> cost = new HashMap<>(); // Map of point to the cost of getting to it from the start node
-      // Map of point to the total cost of getting from the start
-      // to the end passing through the node.  Part known, part heuristic.
-      Map<Point, Integer> score = new HashMap<>();
-
-      open.add(start);
-      cost.put(start, 0); // First one is always free.
-      score.put(start, heuristicCost(start, end));
-
-      while (!open.isEmpty()) {
-        // Current is the node in open with the lowest score.
-        Point current = open.stream()
-            .sorted(Comparator.comparing(score::get)) // Compare the score for each point
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Open set is empty."));
-
-        if (current.equals(end)) {
-          return cost.get(end);
-        }
-
-        open.remove(current);
-        visited.add(current);
-
-        for (Point neighbor : neighbors(current)) {
-          if (visited.contains(neighbor)) {
-            continue; // Already visited.
-          }
-
-          int neighborScore = cost.get(current) + 1;
-
-          if (!open.contains(neighbor)) {
-            open.add(neighbor);
-          } else if (neighborScore >= cost.get(neighbor)) {
-            continue; // Not a better path.
-          }
-
-          from.put(neighbor, current);
-          cost.put(neighbor, neighborScore);
-          score.put(neighbor, neighborScore + heuristicCost(neighbor, end));
-        }
-      }
-
-      throw new IllegalStateException("No path from " + start + " to " + end);
+      return shortestPath(start, end).size() - 1; // Maze doesn't count the first step as a move.
     }
 
     /**
@@ -189,7 +141,7 @@ public class Problem13 {
      * @param point Point to find neighbors for
      * @return Open (non-wall) neighbors of the given point in this maze.
      */
-    private List<Point> neighbors(Point point) {
+    public ImmutableList<Point> neighbors(Point point) {
       return Stream.of(
           new Point(point.x - 1, point.y),
           new Point(point.x + 1, point.y),
@@ -197,7 +149,7 @@ public class Problem13 {
           new Point(point.x, point.y + 1)
       )
           .filter(this::isOpen)
-          .collect(Collectors.toList());
+          .collect(new ImmutableListCollector<>());
     }
 
     /**
@@ -211,7 +163,7 @@ public class Problem13 {
      * @param end  Goal point
      * @return Heuristic number of steps between from and end
      */
-    private int heuristicCost(Point from, Point end) {
+    public int heuristicCost(Point from, Point end) {
       return Math.abs(end.x - from.x) + Math.abs(end.y - from.y);
     }
 
