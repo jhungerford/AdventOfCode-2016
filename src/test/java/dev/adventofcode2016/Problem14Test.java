@@ -5,11 +5,14 @@ import org.junit.Test;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
+import static dev.adventofcode2016.Problem14.KeyGenerator.PLAIN_HASH;
+import static dev.adventofcode2016.Problem14.KeyGenerator.STRETCHED_HASH;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class Problem14Test {
 
-  private Problem14.KeyGenerator keyGenerator = new Problem14.KeyGenerator("abc");
+  private Problem14.KeyGenerator keyGenerator = new Problem14.KeyGenerator("abc", PLAIN_HASH);
+  private Problem14.KeyGenerator stretchedKeyGenerator = new Problem14.KeyGenerator("abc", STRETCHED_HASH);
 
   @Test
   public void key18() {
@@ -56,4 +59,8 @@ public class Problem14Test {
     assertThat(key64Index).hasValue(22728);
   }
 
+  @Test
+  public void stretchedHash() {
+    assertThat(stretchedKeyGenerator.generateKey(0)).startsWith("a107ff");
+  }
 }

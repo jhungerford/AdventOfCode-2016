@@ -8,7 +8,7 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
 import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public class Problem14 {
@@ -16,28 +16,40 @@ public class Problem14 {
   public static class KeyGenerator {
     private static final HashFunction MD5 = Hashing.md5();
 
+    /** Plain hashing algorithm.  Takes a salted input (salt + index), and runs md5 on it. */
+    public static final Function<String, String> PLAIN_HASH = (salted) -> MD5.hashString(salted, Charsets.UTF_8).toString();
+
+    /** Stretched hashing algorithm.  Takes a slated input (salt + index), and runs md5 on the output 2017 times. */
+    public static final Function<String, String> STRETCHED_HASH = (salted) -> {
+      String hash = PLAIN_HASH.apply(salted);
+
+      for (int i = 0; i < 2016; i ++) {
+        hash = PLAIN_HASH.apply(hash);
+      }
+
+      return hash;
+    };
+
     // Problem14 uses lookahead to determine if a key is valid (one of the next 1000 keys must
     // match a condition), so keyCache caches keys.
-    private final LoadingCache<Integer, String> keyCache = CacheBuilder.newBuilder()
-        .maximumSize(2000)
-        .build(
-            new CacheLoader<Integer, String>() {
-              @Override
-              public String load(Integer index) throws Exception {
-                return MD5.hashString(salt + index, Charsets.UTF_8).toString();
-              }
-            }
-        );
-
-    private final String salt;
+    private final LoadingCache<Integer, String> keyCache;
 
     /**
      * Constructs a new KeyGenerator with the given salt.  Numbers will be appended to the salt.
      *
      * @param salt Salt to use to generate keys
      */
-    public KeyGenerator(String salt) {
-      this.salt = salt;
+    public KeyGenerator(String salt, Function<String, String> hashAlgorithm) {
+      this.keyCache = CacheBuilder.newBuilder()
+          .maximumSize(2000)
+          .build(
+              new CacheLoader<Integer, String>() {
+                @Override
+                public String load(Integer index) throws Exception {
+                  return hashAlgorithm.apply(salt + index);
+                }
+              }
+          );
     }
 
     /**
@@ -108,14 +120,26 @@ public class Problem14 {
     }
   }
 
-  public static void main(String[] args) {
-    KeyGenerator keyGenerator = new KeyGenerator("yjdafjpo");
-
-    OptionalInt key64Index = IntStream.iterate(1, i -> i + 1)
+  /**
+   * Returns the index of the n-th valid key that the keyGenerator generates.
+   *
+   * @param keyGenerator KeyGenerator to use
+   * @param n            Number of the key index to return, starting at 1
+   * @return
+   */
+  public static int nthKeyIndex(KeyGenerator keyGenerator, int n) {
+    return IntStream.iterate(1, i -> i + 1)
         .filter(keyGenerator::isKeyIndex)
-        .limit(64)
-        .max();
+        .limit(n)
+        .max()
+        .getAsInt(); // IntStream.iterate is infinite, so max will never be empty
+  }
 
-    System.out.println("Part 1: " + key64Index + " produces the 64th key.");
+  public static void main(String[] args) {
+    KeyGenerator plainKeyGenerator = new KeyGenerator("yjdafjpo", KeyGenerator.PLAIN_HASH);
+    KeyGenerator stretchKeyGenerator = new KeyGenerator("yjdafjpo", KeyGenerator.STRETCHED_HASH);
+
+    System.out.println("Part 1: " + nthKeyIndex(plainKeyGenerator, 64) + " produces the 64th key.");
+    System.out.println("Part 2: " + nthKeyIndex(stretchKeyGenerator, 64) + " produces the 64th stretched key.");
   }
 }
