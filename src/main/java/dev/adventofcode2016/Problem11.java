@@ -104,13 +104,55 @@ public class Problem11 implements AStar<Problem11.Building> {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
       Building building = (Building) o;
-      return elevatorFloor == building.elevatorFloor &&
-          Arrays.equals(moveables, building.moveables);
+
+      if (elevatorFloor != building.elevatorFloor) {
+        return false;
+      }
+
+      int[] generatorsPerFloor = new int[4];
+      int[] microchipsPerFloor = new int[4];
+
+      for (Moveable moveable : moveables) {
+        if (moveable.type == MICROCHIP) {
+          microchipsPerFloor[moveable.floor - 1]++;
+        } else {
+          generatorsPerFloor[moveable.floor - 1]++;
+        }
+      }
+
+      int[] otherGeneratorsPerFloor = new int[4];
+      int[] otherMicrochipsPerFloor = new int[4];
+
+      for (Moveable moveable : building.moveables) {
+        if (moveable.type == MICROCHIP) {
+          otherMicrochipsPerFloor[moveable.floor - 1]++;
+        } else {
+          otherGeneratorsPerFloor[moveable.floor - 1]++;
+        }
+      }
+
+      return Arrays.equals(microchipsPerFloor, otherMicrochipsPerFloor)
+          && Arrays.equals(generatorsPerFloor, otherGeneratorsPerFloor);
+
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(elevatorFloor, moveables);
+      int[] generatorsPerFloor = new int[4];
+      int[] microchipsPerFloor = new int[4];
+
+      for (Moveable moveable : moveables) {
+        if (moveable.type == MICROCHIP) {
+          microchipsPerFloor[moveable.floor - 1]++;
+        } else {
+          generatorsPerFloor[moveable.floor - 1]++;
+        }
+      }
+
+      return Objects.hash(elevatorFloor,
+          Arrays.hashCode(generatorsPerFloor),
+          Arrays.hashCode(microchipsPerFloor)
+      );
     }
 
     @Override
@@ -228,7 +270,7 @@ public class Problem11 implements AStar<Problem11.Building> {
     );
 
     Building end = new Building(
-        1,
+        4,
         new Moveable('P', 4, GENERATOR),
         new Moveable('P', 4, MICROCHIP),
         new Moveable('B', 4, GENERATOR),
