@@ -20,25 +20,24 @@ public interface AStar<POSITION> {
    * @return Shortest path between the two positions
    */
   default ImmutableList<POSITION> shortestPath(POSITION start, POSITION end) {
-    Set<POSITION> visited = new HashSet<>(); // Set of points that have already been visited
-    Set<POSITION> open = new HashSet<>(); // Set of points to be evaluated
-    Map<POSITION, POSITION> from = new HashMap<>(); // Map of point to the point it can most efficiently be reached from
-
     Map<POSITION, Integer> cost = new HashMap<>(); // Map of point to the cost of getting to it from the start node
     // Map of point to the total cost of getting from the start
     // to the end passing through the node.  Part known, part heuristic.
     Map<POSITION, Integer> score = new HashMap<>();
 
-    open.add(start);
-    cost.put(start, 0); // First one is always free.
+    Set<POSITION> visited = new HashSet<>(); // Set of points that have already been visited
+    // Set of points to be evaluated, sorted by lowest score.
+    PriorityQueue<POSITION> open = new PriorityQueue<>(Comparator.comparing(score::get));
+    Map<POSITION, POSITION> from = new HashMap<>(); // Map of point to the point it can most efficiently be reached from
+
     score.put(start, heuristicCost(start, end));
+    cost.put(start, 0); // First one is always free.
+
+    open.add(start);
 
     while (!open.isEmpty()) {
       // Current is the node in open with the lowest score.
-      POSITION current = open.stream()
-          .sorted(Comparator.comparing(score::get)) // Compare the score for each point
-          .findFirst()
-          .orElseThrow(() -> new IllegalStateException("Open set is empty."));
+      POSITION current = open.poll();
 
       if (current.equals(end)) {
         ImmutableList.Builder<POSITION> path = ImmutableList.builder();
@@ -63,15 +62,14 @@ public interface AStar<POSITION> {
 
         int neighborScore = cost.get(current) + 1; // TODO: expose actual step distance function.
 
-        if (!open.contains(neighbor)) {
-          open.add(neighbor);
-        } else if (neighborScore >= cost.get(neighbor)) {
+        if (cost.get(neighbor) != null && neighborScore >= cost.get(neighbor)) {
           continue; // Not a better path.
         }
 
         from.put(neighbor, current);
         cost.put(neighbor, neighborScore);
         score.put(neighbor, neighborScore + heuristicCost(neighbor, end));
+        open.add(neighbor);
       }
     }
 

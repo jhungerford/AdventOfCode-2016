@@ -64,7 +64,7 @@ public class Problem11 implements AStar<Problem11.Building> {
     }
 
     /**
-     * Returns a resulting building where teh elevator moves the given materials the number of floors.
+     * Returns a resulting building where the elevator moves the given materials the number of floors.
      *
      * @param floors    Number of floors to move.  The elevator can move 1 or -1 floors.
      * @param moveables Materials to move
