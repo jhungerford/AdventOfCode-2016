@@ -65,5 +65,17 @@ public class Problem15 {
     );
 
     System.out.println("Part 1: push the button at time " + part1Machine.earliestTime());
+
+    Machine part2Machine = new Machine(
+        new Disk(1, 7, 0),
+        new Disk(2, 13, 0),
+        new Disk(3, 3, 2),
+        new Disk(4, 5, 2),
+        new Disk(5, 17, 0),
+        new Disk(6, 19, 7),
+        new Disk(7, 11, 0)
+    );
+
+    System.out.println("Part 2: push the button at time " + part2Machine.earliestTime());
   }
 }
