@@ -61,7 +61,7 @@ public interface AStar<POSITION> {
           continue; // Already visited.
         }
 
-        int neighborScore = cost.get(current) + 1;
+        int neighborScore = cost.get(current) + 1; // TODO: expose actual step distance function.
 
         if (!open.contains(neighbor)) {
           open.add(neighbor);

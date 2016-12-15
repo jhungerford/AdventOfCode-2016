@@ -11,7 +11,7 @@ public class Problem11Test {
   @Test
   public void renderBuilding() {
     Problem11.Building building = new Problem11.Building(
-        new Problem11.Elevator(1),
+        1,
         new Problem11.Moveable('H', 2, GENERATOR),
         new Problem11.Moveable('H', 1, MICROCHIP),
         new Problem11.Moveable('L', 3, GENERATOR),
@@ -24,5 +24,26 @@ public class Problem11Test {
         "F2 .  HG .  .  .  ",
         "F1 E  .  HM .  LM "
     );
+  }
+
+  @Test
+  public void part1ExampleFewestSteps() {
+    Problem11.Building building = new Problem11.Building(
+        1,
+        new Problem11.Moveable('H', 2, GENERATOR),
+        new Problem11.Moveable('H', 1, MICROCHIP),
+        new Problem11.Moveable('L', 3, GENERATOR),
+        new Problem11.Moveable('L', 1, MICROCHIP)
+    );
+
+    Problem11.Building endBuilding = new Problem11.Building(
+        4,
+        new Problem11.Moveable('H', 4, GENERATOR),
+        new Problem11.Moveable('H', 4, MICROCHIP),
+        new Problem11.Moveable('L', 4, GENERATOR),
+        new Problem11.Moveable('L', 4, MICROCHIP)
+    );
+
+    assertThat(new Problem11().shortestPath(building, endBuilding)).hasSize(12);
   }
 }
