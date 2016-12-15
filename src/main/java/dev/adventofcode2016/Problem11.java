@@ -269,7 +269,7 @@ public class Problem11 implements AStar<Problem11.Building> {
         // The fourth floor contains nothing relevant.
     );
 
-    Building end = new Building(
+    Building endPart1 = new Building(
         4,
         new Moveable('P', 4, GENERATOR),
         new Moveable('P', 4, MICROCHIP),
@@ -285,8 +285,63 @@ public class Problem11 implements AStar<Problem11.Building> {
         // The fourth floor contains nothing relevant.
     );
 
-    int numSteps = new Problem11().shortestPath(part1, end).size();
+    int part1Steps = new Problem11().shortestPath(part1, endPart1).size() - 1;
+    System.out.println("Part 1: " + part1Steps + " steps");
 
-    System.out.println("Part 1: " + numSteps + " steps");
+    // E: elerium
+    // D: dilithium
+
+    Building part2 = new Building(
+        1,
+
+        // The first floor contains a promethium generator and a promethium-compatible microchip.
+        new Moveable('P', 1, GENERATOR),
+        new Moveable('P', 1, MICROCHIP),
+        new Moveable('E', 1, GENERATOR),
+        new Moveable('E', 1, MICROCHIP),
+        new Moveable('D', 1, GENERATOR),
+        new Moveable('D', 1, MICROCHIP),
+
+        // The second floor contains a cobalt generator, a curium generator, a ruthenium generator,
+        // and a plutonium generator.
+        new Moveable('B', 2, GENERATOR),
+        new Moveable('C', 2, GENERATOR),
+        new Moveable('R', 2, GENERATOR),
+        new Moveable('L', 2, GENERATOR),
+
+        // The third floor contains a cobalt-compatible microchip, a curium-compatible microchip,
+        // a ruthenium-compatible microchip, and a plutonium-compatible microchip.
+        new Moveable('B', 3, MICROCHIP),
+        new Moveable('C', 3, MICROCHIP),
+        new Moveable('R', 3, MICROCHIP),
+        new Moveable('L', 3, MICROCHIP)
+
+        // The fourth floor contains nothing relevant.
+    );
+
+
+
+    Building endPart2 = new Building(
+        4,
+        new Moveable('P', 4, GENERATOR),
+        new Moveable('P', 4, MICROCHIP),
+        new Moveable('E', 4, GENERATOR),
+        new Moveable('E', 4, MICROCHIP),
+        new Moveable('D', 4, GENERATOR),
+        new Moveable('D', 4, MICROCHIP),
+        new Moveable('B', 4, GENERATOR),
+        new Moveable('C', 4, GENERATOR),
+        new Moveable('R', 4, GENERATOR),
+        new Moveable('L', 4, GENERATOR),
+        new Moveable('B', 4, MICROCHIP),
+        new Moveable('C', 4, MICROCHIP),
+        new Moveable('R', 4, MICROCHIP),
+        new Moveable('L', 4, MICROCHIP)
+
+        // The fourth floor contains nothing relevant.
+    );
+
+    int part2Steps = new Problem11().shortestPath(part2, endPart2).size() - 1;
+    System.out.println("Part 2: " + part2Steps + " steps");
   }
 }
