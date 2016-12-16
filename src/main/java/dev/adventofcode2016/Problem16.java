@@ -45,13 +45,25 @@ public class Problem16 {
   }
 
   public static void main(String[] args) {
-    String randomData = "10001001100000001";
-    int diskLength = 272;
+    String initialRandomData = "10001001100000001";
 
-    while (randomData.length() < diskLength) {
-      randomData = step(randomData);
+    int part1DiskLength = 272;
+    String part1RandomData = initialRandomData;
+
+    while (part1RandomData.length() < part1DiskLength) {
+      part1RandomData = step(part1RandomData);
     }
 
-    System.out.println("Part 1: checksum is '" + checksum(randomData, diskLength) + "'");
+    System.out.println("Part 1: checksum is '" + checksum(part1RandomData, part1DiskLength) + "'");
+
+    int part2DiskLength = 35651584;
+    String part2RandomData = initialRandomData;
+
+    while (part2RandomData.length() < part2DiskLength) {
+      part2RandomData = step(part2RandomData);
+    }
+
+    System.out.println("Part 2: checksum is '" + checksum(part2RandomData, part2DiskLength) + "'");
+
   }
 }
