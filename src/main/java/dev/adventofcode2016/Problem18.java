@@ -74,5 +74,6 @@ public class Problem18 {
     String firstRow = Resources.toString(Resources.getResource("problem18.txt"), Charsets.UTF_8).trim();
 
     System.out.println("Part 1: " + countSafe(rows(firstRow, 40)) + " safe tiles");
+    System.out.println("Part 2: " + countSafe(rows(firstRow, 400000)) + " safe tiles");
   }
 }
