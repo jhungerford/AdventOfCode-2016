@@ -37,4 +37,19 @@ public class Problem17Test {
   public void shortestPathExample3() {
     assertThat(new Problem17("ulqzkmiv").shortestPath()).isEqualTo("DRURDRUDDLLDLUURRDULRLDUUDDDRR");
   }
+
+  @Test
+  public void longestPathExample1() {
+    assertThat(new Problem17("ihgpwlah").longestPath()).hasSize(370);
+  }
+
+  @Test
+  public void longestPathExample2() {
+    assertThat(new Problem17("kglvqrro").longestPath()).hasSize(492);
+  }
+
+  @Test
+  public void longestPathExample3() {
+    assertThat(new Problem17("ulqzkmiv").longestPath()).hasSize(830);
+  }
 }

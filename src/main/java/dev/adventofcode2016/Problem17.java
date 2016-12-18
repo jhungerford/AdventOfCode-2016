@@ -6,7 +6,10 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import dev.adventofcode2016.algorithms.AStar;
 
+import java.util.ArrayDeque;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.Queue;
 
 public class Problem17 implements AStar<Problem17.Position> {
   public static final HashFunction MD5 = Hashing.md5();
@@ -96,6 +99,33 @@ public class Problem17 implements AStar<Problem17.Position> {
     return shortestPath(start, end).reverse().get(0).pathSoFar;
   }
 
+  /**
+   * Returns the longest path between the start position and the vault.
+   *
+   * @return Longest path that still reaches the vault.
+   */
+  public String longestPath() {
+    ImmutableList.Builder<String> paths = ImmutableList.builder();
+
+    Queue<Position> open = new ArrayDeque<>();
+    open.add(new Position(0, 0, ""));
+
+    while (!open.isEmpty()) {
+      Position current = open.remove();
+
+      if (current.equals(end)) {
+        paths.add(current.pathSoFar);
+      } else {
+        open.addAll(neighbors(current));
+      }
+    }
+
+    return paths.build().stream()
+        .sorted(Comparator.comparing(String::length).reversed())
+        .findFirst()
+        .orElseThrow(() -> new IllegalStateException("No path to the vault with passcode " + passcode));
+  }
+
   public final class Position {
     public final int x;
     public final int y;
@@ -148,7 +178,9 @@ public class Problem17 implements AStar<Problem17.Position> {
   }
 
   public static void main(String[] args) {
-    Problem17 part1 = new Problem17("mmsxrhfx");
-    System.out.println("Part 1: shortest path is " + part1.shortestPath());
+    Problem17 floor = new Problem17("mmsxrhfx");
+
+    System.out.println("Part 1: shortest path is " + floor.shortestPath());
+    System.out.println("Part 2: longest path has " + floor.longestPath().length() + " steps");
   }
 }
