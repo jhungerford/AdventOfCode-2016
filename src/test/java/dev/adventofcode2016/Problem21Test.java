@@ -56,4 +56,55 @@ public class Problem21Test {
   public void rotatePositionEndOfString() {
     assertThat(Problem21.parseStep("rotate based on position of letter d").apply("ecabd")).isEqualTo("decab");
   }
+
+
+  @Test
+  public void reverseSwapPosition() {
+    assertThat(Problem21.parseStep("swap position 4 with position 0").reverse("ebcda")).isEqualTo("abcde");
+  }
+
+  @Test
+  public void reverseSwapLetter() {
+    assertThat(Problem21.parseStep("swap letter d with letter b").reverse("edcba")).isEqualTo("ebcda");
+  }
+
+  @Test
+  public void reverseReversePositions() {
+    assertThat(Problem21.parseStep("reverse positions 0 through 4").reverse("abcde")).isEqualTo("edcba");
+  }
+
+  @Test
+  public void reverseReverseSubstring() {
+    assertThat(Problem21.parseStep("reverse positions 1 through 3").reverse("ebcda")).isEqualTo("edcba");
+  }
+
+  @Test
+  public void reverseRotateLeft() {
+    assertThat(Problem21.parseStep("rotate left 1 step").reverse("bcdea")).isEqualTo("abcde");
+  }
+
+  @Test
+  public void reverseRotateRight() {
+    assertThat(Problem21.parseStep("rotate right 1 step").reverse("abcde")).isEqualTo("bcdea");
+  }
+
+  @Test
+  public void reverseMovePositionForward() {
+    assertThat(Problem21.parseStep("move position 1 to position 4").reverse("bdeac")).isEqualTo("bcdea");
+  }
+
+  @Test
+  public void reverseMovePositionBackward() {
+    assertThat(Problem21.parseStep("move position 3 to position 0").reverse("abdec")).isEqualTo("bdeac");
+  }
+
+  @Test
+  public void reverseRotatePositionBeginningOfString() {
+    assertThat(Problem21.parseStep("rotate based on position of letter a").reverse("habcdefg")).isEqualTo("abcdefgh");
+  }
+
+  @Test
+  public void reverseRotatePositionEndOfString() {
+    assertThat(Problem21.parseStep("rotate based on position of letter h").reverse("habcdefg")).isEqualTo("abcdefgh");
+  }
 }

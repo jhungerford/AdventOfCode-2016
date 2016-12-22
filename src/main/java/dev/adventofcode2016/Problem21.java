@@ -22,7 +22,7 @@ public class Problem21 {
     }
 
     /**
-     * Applies all of the scrambling step to the given password, and returns the result.
+     * Applies all of the scrambling steps to the given password, and returns the result.
      *
      * @param password Password to scramble
      * @return Scrambled password
@@ -35,6 +35,22 @@ public class Problem21 {
 
       return scrambled;
     }
+
+    /**
+     * Applies all of the scrambling steps to the given password in reverse, which results
+     * in the original password.
+     *
+     * @param scrambled String to unscramble
+     * @return Unscrambled password
+     */
+    public String unscramble(String scrambled) {
+      String password = scrambled;
+      for (Step step : steps.reverse()) {
+        password = step.reverse(password);
+      }
+
+      return password;
+    }
   }
 
   public interface Step {
@@ -45,6 +61,14 @@ public class Problem21 {
      * @return Scrambled string
      */
     String apply(String input);
+
+    /**
+     * Unapplies this scrambling step to the input.
+     *
+     * @param input String to unscramble
+     * @return Unscrambled string
+     */
+    String reverse(String input);
   }
 
   /**
@@ -72,6 +96,11 @@ public class Problem21 {
           + input.charAt(x)
           + input.substring(y + 1);
     }
+
+    @Override
+    public String reverse(String input) {
+      return apply(input);
+    }
   }
 
   /**
@@ -90,6 +119,11 @@ public class Problem21 {
     @Override
     public String apply(String input) {
       return new SwapPositionsStep(input.indexOf(x), input.indexOf(y)).apply(input);
+    }
+
+    @Override
+    public String reverse(String input) {
+      return apply(input);
     }
   }
 
@@ -116,6 +150,11 @@ public class Problem21 {
         return input.substring(input.length() - amount) + input.substring(0, input.length() - amount);
       }
     }
+
+    @Override
+    public String reverse(String input) {
+      return new RotateStep(!left, steps).apply(input);
+    }
   }
 
   /**
@@ -138,6 +177,29 @@ public class Problem21 {
       int amount = 1 + index + (index < 4 ? 0 : 1);
 
       return new RotateStep(false, amount).apply(input);
+    }
+
+    private static final ImmutableMap<Integer, Integer> REVERSE_SHIFTS = ImmutableMap.<Integer, Integer>builder()
+        .put(1, 1)
+        .put(3, 2)
+        .put(5, 3)
+        .put(7, 4)
+        .put(2, 6)
+        .put(4, 7)
+        .put(6, 8)
+        .put(0, 9)
+        .build();
+
+    @Override
+    public String reverse(String input) {
+      if (input.length() != 8) {
+        throw new IllegalStateException("Reverse rotate position is ambiguous for strings that don't have length 8");
+      }
+
+      int index = input.indexOf(letter);
+      int amount = REVERSE_SHIFTS.get(index);
+
+      return new RotateStep(true, amount).apply(input);
     }
   }
 
@@ -164,6 +226,11 @@ public class Problem21 {
       return input.substring(0, x)
           + new StringBuilder(input.substring(x, y + 1)).reverse().toString()
           + input.substring(y + 1);
+    }
+
+    @Override
+    public String reverse(String input) {
+      return apply(input);
     }
   }
 
@@ -193,6 +260,11 @@ public class Problem21 {
             + input.charAt(x)
             + input.substring(y + 1);
       }
+    }
+
+    @Override
+    public String reverse(String input) {
+      return new MoveStep(y, x).apply(input);
     }
   }
 
@@ -261,6 +333,23 @@ public class Problem21 {
             .collect(new ImmutableListCollector<>())
     );
 
+    System.out.println("01234567    01234567");
+    for (int i = 0; i < 8; i ++) {
+      String input = "";
+      for (int j = 0; j < i; j ++) {
+        input += '_';
+      }
+
+      input += '*';
+
+      for (int j = i + 1; j < 8; j ++) {
+        input += "_";
+      }
+
+      System.out.println(input + " -> " + new RotatePositionStep('*').apply(input));
+    }
+
     System.out.println("Part 1: " + scrambler.scramble("abcdefgh"));
+    System.out.println("Part 2: " + scrambler.unscramble("fbgdceah"));
   }
 }
